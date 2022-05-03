@@ -43,8 +43,7 @@ export const timeoutGameAtom = atom(
       const timeoutGame = await rsplsContract[
         player === "j1" ? "j1Timeout" : "j2Timeout"
       ]({
-        gasPrice: 100,
-        gasLimit: 9000000,
+        gasLimit: 30000,
       });
       console.log("Timeouting game...", timeoutGame.hash);
       await timeoutGame.wait();
