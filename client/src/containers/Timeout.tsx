@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex } from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertTitle, Button, Flex } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
 import { timeoutGameAtom, TimeoutGameStateAtom } from "../state/timeoutGame";
@@ -13,18 +13,7 @@ export default function Timeout({ address }: { address: string }) {
       <Button
         type="button"
         variant="outline"
-        width="full"
-        onClick={async () => await timeoutGame({ address, player: "j1" })}
-        mt={4}
-        disabled={timeoutGameState.loading || !address}
-        isLoading={timeoutGameState.loading}
-      >
-        j1Timeout
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={async () => await timeoutGame({ address, player: "j2" })}
+        onClick={async () => await timeoutGame({ address })}
         width="full"
         mt={4}
         disabled={timeoutGameState.loading || !address}
@@ -32,6 +21,18 @@ export default function Timeout({ address }: { address: string }) {
       >
         j2Timeout
       </Button>
+      {timeoutGameState.finished && (
+        <Alert status="success">
+          <AlertIcon />
+          <AlertTitle>Success timeout the game</AlertTitle>
+        </Alert>
+      )}
+      {timeoutGameState.error && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Error timeout the game</AlertTitle>
+        </Alert>
+      )}
     </Flex>
   );
 }

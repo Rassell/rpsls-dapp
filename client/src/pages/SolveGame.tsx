@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+} from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
 import SelectMove from "../components/SelectMove";
@@ -51,6 +59,18 @@ export default function JoinGame() {
           Solve
         </Button>
       </form>
+      {solveGameState.finished && (
+        <Alert status="success">
+          <AlertIcon />
+          <AlertTitle>Success finishing the game</AlertTitle>
+        </Alert>
+      )}
+      {solveGameState.error && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Error finishing the game</AlertTitle>
+        </Alert>
+      )}
       <Timeout address={address} />
     </div>
   );
