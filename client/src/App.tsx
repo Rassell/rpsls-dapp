@@ -1,4 +1,4 @@
-import { Center, ChakraProvider, Spinner } from "@chakra-ui/react";
+import { Button, Center, ChakraProvider, Spinner } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 import React, { useEffect } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
@@ -41,12 +41,7 @@ export default function App() {
             src="https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv"
             alt="Monty Python Gif"
           />
-          <button
-            className="cta-button connect-wallet-button"
-            onClick={connectWallet}
-          >
-            Connect Wallet To Get Started
-          </button>
+          <Button onClick={connectWallet}>Connect Wallet To Get Started</Button>
         </>
       );
     } else {
