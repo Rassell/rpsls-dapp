@@ -23,13 +23,17 @@ export default function CreateGame() {
     event.preventDefault();
 
     await createGame({ move, address, amount });
+
+    setAddress("");
+    setMove("");
+    setAmount(0);
   }
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <FormControl isRequired>
-          <FormLabel htmlFor="address">Address</FormLabel>
+          <FormLabel htmlFor="address">Second player Address</FormLabel>
           <Input
             id="address"
             placeholder="Second player Address"
@@ -41,6 +45,7 @@ export default function CreateGame() {
           <FormLabel htmlFor="amount">Stake</FormLabel>
           <NumberInput
             id="amount"
+            min={0}
             placeholder="Amount to bet"
             onChange={(val) => setAmount(val as any)}
           >

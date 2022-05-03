@@ -1,11 +1,11 @@
 async function main() {
-  const contractFactory = await ethers.getContractFactory("RPS");
-  console.log("RPSLS Factory initialized");
-  const RPSLSFactoryContract = await contractFactory.deploy();
-  console.log("Deploying RPSLS Factory contract");
-  await RPSLSFactoryContract.deployed();
-  console.log("Contract deployed to:", RPSLSFactoryContract.address);
-  return RPSLSFactoryContract.address;
+  const contractFactory = await ethers.getContractFactory("Hasher");
+  console.log("Hasher Factory initialized");
+  const HasherFactoryContract = await contractFactory.deploy();
+  console.log("Deploying Hasher Factory contract");
+  await HasherFactoryContract.deployed();
+  console.log("Contract deployed to:", HasherFactoryContract.address);
+  return HasherFactoryContract.address;
 }
 
 async function runMain() {

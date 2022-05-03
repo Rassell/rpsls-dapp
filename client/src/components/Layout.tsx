@@ -1,15 +1,28 @@
 import React from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { IconButton } from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
+
+import "./Layout.css";
 
 export default function Layout() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isHome = pathname === "/";
 
   return (
-    <div className="">
-      <div onClick={() => navigate(-1)}>go back</div>
-      <div className="">
-        <Outlet />
-      </div>
+    <div className={`layout ${!isHome && "layout-header"}`}>
+      {!isHome && (
+        <div className="layout-button">
+          <IconButton
+            aria-label="Go Home"
+            onClick={() => navigate("/")}
+            size="lg"
+            icon={<ArrowBackIcon />}
+          />
+        </div>
+      )}
+      <Outlet />
     </div>
   );
 }
