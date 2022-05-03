@@ -1,5 +1,8 @@
 import React from "react";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Button,
   FormControl,
   FormLabel,
@@ -10,32 +13,20 @@ import {
 import { useAtom } from "jotai";
 
 import SelectMove from "../components/SelectMove";
-import {
-  createGameAtom,
-  LoadingCreateGameAtom,
-  AddressGameAtom,
-  SaltGameAtom,
-} from "../state/rps";
+import { createGameAtom, CreateGameStateAtom } from "../state/createGame";
 
 export default function CreateGame() {
+  const [, createGame] = useAtom(createGameAtom);
+  const [gameState] = useAtom(CreateGameStateAtom);
+
   const [address, setAddress] = React.useState("");
   const [move, setMove] = React.useState("");
   const [amount, setAmount] = React.useState(0);
-
-  const [, createGame] = useAtom(createGameAtom);
-  const [loadingCreateGame] = useAtom(LoadingCreateGameAtom);
-  const [resultGame] = useAtom(AddressGameAtom);
-  const [saltGame] = useAtom(SaltGameAtom);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     await createGame({ move, address, amount });
-
-    setAddress("");
-    setMove("");
-    setAmount(0);
-    (event.target as any).reset();
   }
 
   return (
@@ -54,6 +45,7 @@ export default function CreateGame() {
           <FormLabel htmlFor="amount">Stake</FormLabel>
           <NumberInput
             id="amount"
+            defaultValue={0}
             min={0}
             placeholder="Amount to bet"
             onChange={(val) => setAmount(val as any)}
@@ -66,16 +58,28 @@ export default function CreateGame() {
           variant="outline"
           width="full"
           mt={4}
-          isLoading={loadingCreateGame}
+          isLoading={gameState.loading}
           disabled={
-            loadingCreateGame || !address || move === "" || amount === 0
+            gameState.loading || !address || move === "" || amount === 0
           }
         >
           Create game
         </Button>
-        <div>Deploy Address: {resultGame} </div>
-        <div>Deploy salt: {saltGame} </div>
       </form>
+      {gameState.finished && (
+        <Alert status="success">
+          <AlertIcon />
+          <AlertTitle>Success creating the contract</AlertTitle>
+        </Alert>
+      )}
+      {gameState.error && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Error creating the contract</AlertTitle>
+        </Alert>
+      )}
+      <div>Deploy Address: {gameState.address} </div>
+      <div>Deploy salt: {gameState.salt} </div>
     </div>
   );
 }

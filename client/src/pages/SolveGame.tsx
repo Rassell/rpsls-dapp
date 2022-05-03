@@ -1,14 +1,10 @@
 import React from "react";
-import { Button, Flex, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
 import SelectMove from "../components/SelectMove";
-import {
-  LoadingJoinGameAtom,
-  LoadingTimeoutGameAtom,
-  solveGameAtom,
-  timeoutGameAtom,
-} from "../state/rps";
+import { solveGameAtom, SolveGameStateAtom } from "../state/solveGame";
+import Timeout from "../containers/Timeout";
 
 export default function JoinGame() {
   const [address, setAddress] = React.useState("");
@@ -16,19 +12,12 @@ export default function JoinGame() {
   const [salt, setSalt] = React.useState("");
 
   const [, solveGame] = useAtom(solveGameAtom);
-  const [, timeoutGame] = useAtom(timeoutGameAtom);
-  const [loading] = useAtom(LoadingJoinGameAtom);
-  const [loadingTimeOut] = useAtom(LoadingTimeoutGameAtom);
+  const [solveGameState] = useAtom(SolveGameStateAtom);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     await solveGame({ address, move, salt });
-
-    setAddress("");
-    setMove("");
-    setSalt("");
-    (event.target as any).reset();
   }
 
   return (
@@ -56,36 +45,13 @@ export default function JoinGame() {
           variant="outline"
           width="full"
           mt={4}
-          disabled={loading || !address || move === "0" || !salt}
-          isLoading={loading}
+          isLoading={solveGameState.loading}
+          disabled={solveGameState.loading || !address || move === "" || !salt}
         >
           Solve
         </Button>
       </form>
-      <Flex gap="2">
-        <Button
-          type="button"
-          variant="outline"
-          width="full"
-          onClick={() => timeoutGame({ address })}
-          mt={4}
-          disabled={loadingTimeOut || !address}
-          isLoading={loadingTimeOut}
-        >
-          j1Timeout
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => timeoutGame({ address })}
-          width="full"
-          mt={4}
-          disabled={loadingTimeOut || !address}
-          isLoading={loadingTimeOut}
-        >
-          j2Timeout
-        </Button>
-      </Flex>
+      <Timeout address={address} />
     </div>
   );
 }

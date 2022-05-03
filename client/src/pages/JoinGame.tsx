@@ -1,5 +1,8 @@
 import React from "react";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Button,
   FormControl,
   FormLabel,
@@ -10,25 +13,20 @@ import {
 import { useAtom } from "jotai";
 
 import SelectMove from "../components/SelectMove";
-import { joinGameAtom, LoadingJoinGameAtom } from "../state/rps";
+import { JoinGameStateAtom, joinGameAtom } from "../state/joinGame";
 
 export default function JoinGame() {
+  const [, joinGame] = useAtom(joinGameAtom);
+  const [joinGameState] = useAtom(JoinGameStateAtom);
+
   const [address, setAddress] = React.useState("");
   const [move, setMove] = React.useState("");
   const [amount, setAmount] = React.useState(0);
-
-  const [, joinGame] = useAtom(joinGameAtom);
-  const [loading] = useAtom(LoadingJoinGameAtom);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     await joinGame({ address, move, amount });
-
-    setAddress("");
-    setMove("");
-    setAmount(0);
-    (event.target as any).reset();
   }
 
   return (
@@ -59,12 +57,26 @@ export default function JoinGame() {
           variant="outline"
           width="full"
           mt={4}
-          isLoading={loading}
-          disabled={loading || !address || move === "" || amount === 0}
+          isLoading={joinGameState.loading}
+          disabled={
+            joinGameState.loading || !address || move === "" || amount === 0
+          }
         >
           Join Game
         </Button>
       </form>
+      {joinGameState.finished && (
+        <Alert status="success">
+          <AlertIcon />
+          <AlertTitle>Success joining the game</AlertTitle>
+        </Alert>
+      )}
+      {joinGameState.error && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Error joining the game</AlertTitle>
+        </Alert>
+      )}
     </div>
   );
 }
