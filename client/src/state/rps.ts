@@ -6,16 +6,14 @@ import { AccountAtom, hasherContractAtom, SignerAtom } from "./wallet";
 
 export const LoadingCreateGameAtom = atom(false);
 export const LoadingJoinGameAtom = atom(false);
-export const ResultGameAtom = atom("");
-export const InitGameAtom = atom({
-  move: 0,
-  hash: 0,
-});
+export const LoadingTimeoutGameAtom = atom(false);
+export const AddressGameAtom = atom("");
+export const SaltGameAtom = atom<number | null>(null);
 
 async function createHash(hasherContract: any, move: number) {
   const salt = window.crypto.getRandomValues(new Uint32Array(1))[0];
   const hash = await hasherContract.hash(move, salt);
-  return hash;
+  return { hash, salt };
 }
 
 const ContractGenerator = (address: string, abi: any, signer: any) =>
@@ -31,11 +29,12 @@ export const createGameAtom = atom(
     if (account === null || hasherContract === null) return;
 
     try {
+      set(SaltGameAtom, null);
+      set(AddressGameAtom, "");
       set(LoadingCreateGameAtom, true);
       console.log("Creating hash...");
-      const hash = await createHash(hasherContract, move);
-      console.log("Hash Generated...");
-      set(InitGameAtom, { hash, move });
+      const { hash, salt } = await createHash(hasherContract, move);
+      console.log(`Hash Generated... from salt: ${salt}`);
       console.log("Generating game...");
       const signer = get(SignerAtom);
       const createGame = await ContractFactory(
@@ -46,7 +45,8 @@ export const createGameAtom = atom(
         value: BigNumber.from(amount),
       });
       console.log("Game Generated...");
-      set(ResultGameAtom, createGame.address);
+      set(AddressGameAtom, createGame.address);
+      set(SaltGameAtom, salt);
     } catch (error) {
       console.log(error);
     } finally {
@@ -80,49 +80,45 @@ export const joinGameAtom = atom(
   }
 );
 
-export const solveGameAtom = atom(null, async (get, set, { address, move, salt }) => {
-  const hasherContract = get(hasherContractAtom);
-  const initGame = get(InitGameAtom);
-  if (
-    get(AccountAtom) === null ||
-    hasherContract === null ||
-    initGame.hash === 0
-  )
-    return;
-
-  try {
-    set(LoadingCreateGameAtom, true);
-    const signer = get(SignerAtom);
-    const rsplsContract = ContractGenerator(address, rps.abi, signer);
-    const solveGame = await rsplsContract.solve();
-    console.log("Mining...", solveGame.hash);
-    await solveGame.wait();
-    console.log("Mined -- ", solveGame.hash);
-  } catch (error) {
-    console.log(error);
-  } finally {
-    set(LoadingCreateGameAtom, false);
-    set(InitGameAtom, { move: 0, hash: 0 });
-  }
-});
-
-export const timeoutGameAtom = atom(
+export const solveGameAtom = atom(
   null,
-  async (get, set, { address, move }) => {
-    if (get(AccountAtom) === null) return;
+  async (get, set, { address, move, salt }) => {
+    const hasherContract = get(hasherContractAtom);
+    const saltGame = get(SaltGameAtom);
+    if (get(AccountAtom) === null || hasherContract === null || saltGame === 0)
+      return;
 
     try {
       set(LoadingCreateGameAtom, true);
       const signer = get(SignerAtom);
       const rsplsContract = ContractGenerator(address, rps.abi, signer);
-      const timeoutGame = await rsplsContract.j1Timeout();
-      console.log("Mining...", timeoutGame.hash);
-      await timeoutGame.wait();
-      console.log("Mined -- ", timeoutGame.hash);
+      const solveGame = await rsplsContract.solve(move, salt);
+      console.log("Mining...", solveGame.hash);
+      await solveGame.wait();
+      console.log("Mined -- ", solveGame.hash);
     } catch (error) {
       console.log(error);
     } finally {
       set(LoadingCreateGameAtom, false);
+      set(SaltGameAtom, null);
     }
   }
 );
+
+export const timeoutGameAtom = atom(null, async (get, set, { address }) => {
+  if (get(AccountAtom) === null) return;
+
+  try {
+    set(LoadingTimeoutGameAtom, true);
+    const signer = get(SignerAtom);
+    const rsplsContract = ContractGenerator(address, rps.abi, signer);
+    const timeoutGame = await rsplsContract.j1Timeout();
+    console.log("Mining...", timeoutGame.hash);
+    await timeoutGame.wait();
+    console.log("Mined -- ", timeoutGame.hash);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    set(LoadingTimeoutGameAtom, false);
+  }
+});

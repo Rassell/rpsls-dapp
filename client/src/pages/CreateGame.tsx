@@ -13,7 +13,8 @@ import SelectMove from "../components/SelectMove";
 import {
   createGameAtom,
   LoadingCreateGameAtom,
-  ResultGameAtom,
+  AddressGameAtom,
+  SaltGameAtom,
 } from "../state/rps";
 
 export default function CreateGame() {
@@ -23,7 +24,8 @@ export default function CreateGame() {
 
   const [, createGame] = useAtom(createGameAtom);
   const [loadingCreateGame] = useAtom(LoadingCreateGameAtom);
-  const [resultGame] = useAtom(ResultGameAtom);
+  const [resultGame] = useAtom(AddressGameAtom);
+  const [saltGame] = useAtom(SaltGameAtom);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -65,10 +67,14 @@ export default function CreateGame() {
           width="full"
           mt={4}
           isLoading={loadingCreateGame}
+          disabled={
+            loadingCreateGame || !address || move === "" || amount === 0
+          }
         >
           Create game
         </Button>
-        <div>Deploy Address: {resultGame}</div>
+        <div>Deploy Address: {resultGame} </div>
+        <div>Deploy salt: {saltGame} </div>
       </form>
     </div>
   );

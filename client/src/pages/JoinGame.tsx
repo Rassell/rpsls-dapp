@@ -60,6 +60,7 @@ export default function JoinGame() {
           width="full"
           mt={4}
           isLoading={loading}
+          disabled={loading || !address || move === "" || amount === 0}
         >
           Join Game
         </Button>
