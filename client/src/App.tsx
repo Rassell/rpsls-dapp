@@ -1,4 +1,4 @@
-import { ChakraProvider, Spinner } from "@chakra-ui/react";
+import { Center, ChakraProvider, Spinner } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 import React, { useEffect } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
@@ -60,7 +60,14 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             {missingMetaMask ? (
-              <Route index element={<div>Please install metamask</div>} />
+              <Route
+                index
+                element={
+                  <Center className="home">
+                    <div>Please install metamask</div>
+                  </Center>
+                }
+              />
             ) : (
               <>
                 <Route index element={<Home />} />

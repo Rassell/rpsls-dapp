@@ -44,9 +44,10 @@ export const initWeb3Atom = atom(null, async (get, set) => {
 
     set(SignerAtom, signer);
     set(hasherContractAtom, hasherContract);
-    set(LoadingInitWeb3Atom, false);
   } catch (error) {
     console.log(error);
+  } finally {
+    set(LoadingInitWeb3Atom, false);
   }
 });
 

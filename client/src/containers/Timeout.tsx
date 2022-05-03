@@ -9,18 +9,31 @@ export default function Timeout({ address }: { address: string }) {
   const [timeoutGameState] = useAtom(TimeoutGameStateAtom);
 
   return (
-    <Flex gap="2">
-      <Button
-        type="button"
-        variant="outline"
-        onClick={async () => await timeoutGame({ address })}
-        width="full"
-        mt={4}
-        disabled={timeoutGameState.loading || !address}
-        isLoading={timeoutGameState.loading}
-      >
-        j2Timeout
-      </Button>
+    <>
+      <Flex gap="2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={async () => await timeoutGame({ address, player: "1" })}
+          width="full"
+          mt={4}
+          disabled={timeoutGameState.loading || !address}
+          isLoading={timeoutGameState.loading}
+        >
+          j1Timeout
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={async () => await timeoutGame({ address, player: "2" })}
+          width="full"
+          mt={4}
+          disabled={timeoutGameState.loading || !address}
+          isLoading={timeoutGameState.loading}
+        >
+          j2Timeout
+        </Button>
+      </Flex>
       {timeoutGameState.finished && (
         <Alert status="success">
           <AlertIcon />
@@ -33,6 +46,6 @@ export default function Timeout({ address }: { address: string }) {
           <AlertTitle>Error timeout the game</AlertTitle>
         </Alert>
       )}
-    </Flex>
+    </>
   );
 }

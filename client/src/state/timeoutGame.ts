@@ -23,7 +23,11 @@ function delay(mili: number) {
 
 export const timeoutGameAtom = atom(
   null,
-  async (get, set, { address }: { address: string }) => {
+  async (
+    get,
+    set,
+    { address, player }: { address: string; player: string }
+  ) => {
     const hasherContract = get(hasherContractAtom);
     const account = get(AccountAtom);
     if (account === null || hasherContract === null) return;
@@ -36,7 +40,9 @@ export const timeoutGameAtom = atom(
       });
       const signer = get(SignerAtom);
       const rsplsContract = ContractGenerator(address, rps.abi, signer);
-      const timeoutGame = await rsplsContract.j2Timeout({
+      const timeoutGame = await rsplsContract[
+        player === "1" ? "j1Timeout" : "j2Timeout"
+      ]({
         gasLimit: 300000,
       });
       console.log("Timeouting game...", timeoutGame.hash);
