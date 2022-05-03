@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/rpsls-dapp/static/css/main.585ecc08.css",
-    "main.js": "/rpsls-dapp/static/js/main.fb1fb254.js",
+    "main.js": "/rpsls-dapp/static/js/main.dc76806f.js",
     "index.html": "/rpsls-dapp/index.html",
     "main.585ecc08.css.map": "/rpsls-dapp/static/css/main.585ecc08.css.map",
-    "main.fb1fb254.js.map": "/rpsls-dapp/static/js/main.fb1fb254.js.map"
+    "main.dc76806f.js.map": "/rpsls-dapp/static/js/main.dc76806f.js.map"
   },
   "entrypoints": [
     "static/css/main.585ecc08.css",
-    "static/js/main.fb1fb254.js"
+    "static/js/main.dc76806f.js"
   ]
 }
