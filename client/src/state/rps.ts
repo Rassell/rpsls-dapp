@@ -1,10 +1,12 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { atom } from "jotai";
 
 import { rps } from "../assets";
-import { AccountAtom, hasherContractAtom } from "./wallet";
+import { AccountAtom, hasherContractAtom, SignerAtom } from "./wallet";
 
 export const LoadingCreateGameAtom = atom(false);
+export const LoadingJoinGameAtom = atom(false);
+export const ResultGameAtom = atom("");
 export const InitGameAtom = atom({
   move: 0,
   hash: 0,
@@ -16,10 +18,10 @@ async function createHash(hasherContract: any, move: number) {
   return hash;
 }
 
-const ContractGenerator = (address: string, abi: any) =>
-  new ethers.Contract(address, abi);
-const ContractFactory = (abi: any, byteCode: any) =>
-  new ethers.ContractFactory(abi, byteCode);
+const ContractGenerator = (address: string, abi: any, signer: any) =>
+  new ethers.Contract(address, abi, signer);
+const ContractFactory = (abi: any, byteCode: any, signer: any) =>
+  new ethers.ContractFactory(abi, byteCode, signer);
 
 export const createGameAtom = atom(
   null,
@@ -30,20 +32,21 @@ export const createGameAtom = atom(
 
     try {
       set(LoadingCreateGameAtom, true);
+      console.log("Creating hash...");
       const hash = await createHash(hasherContract, move);
+      console.log("Hash Generated...");
       set(InitGameAtom, { hash, move });
-      const createGame = await ContractFactory(rps.abi, rps.bytecode).deploy(
-        hash,
-        address,
-        {
-          from: account,
-          gas: 3000,
-          value: ethers.utils.formatUnits(amount, "gwei"),
-        }
-      );
-      console.log("Mining...", createGame.hash);
-      await createGame.wait();
-      console.log("Mined -- ", createGame.hash);
+      console.log("Generating game...");
+      const signer = get(SignerAtom);
+      const createGame = await ContractFactory(
+        rps.abi,
+        rps.bytecode,
+        signer
+      ).deploy(hash, address, {
+        value: BigNumber.from(amount),
+      });
+      console.log("Game Generated...");
+      set(ResultGameAtom, createGame.address);
     } catch (error) {
       console.log(error);
     } finally {
@@ -60,12 +63,11 @@ export const joinGameAtom = atom(
     if (account === null || hasherContract === null) return;
 
     try {
-      set(LoadingCreateGameAtom, true);
-      const rsplsContract = ContractGenerator(address, rps.abi);
+      set(LoadingJoinGameAtom, true);
+      const signer = get(SignerAtom);
+      const rsplsContract = ContractGenerator(address, rps.abi, signer);
       const playGame = await rsplsContract.play(move, {
-        from: account,
-        gas: 3000,
-        value: ethers.utils.formatUnits(amount, "gwei"),
+        value: BigNumber.from(amount),
       });
       console.log("Mining...", playGame.hash);
       await playGame.wait();
@@ -73,7 +75,7 @@ export const joinGameAtom = atom(
     } catch (error) {
       console.log(error);
     } finally {
-      set(LoadingCreateGameAtom, false);
+      set(LoadingJoinGameAtom, false);
     }
   }
 );
@@ -90,7 +92,8 @@ export const solveGameAtom = atom(null, async (get, set, { address }) => {
 
   try {
     set(LoadingCreateGameAtom, true);
-    const rsplsContract = ContractGenerator(address, rps.abi);
+    const signer = get(SignerAtom);
+    const rsplsContract = ContractGenerator(address, rps.abi, signer);
     const solveGame = await rsplsContract.solve();
     console.log("Mining...", solveGame.hash);
     await solveGame.wait();
@@ -110,7 +113,8 @@ export const timeoutGameAtom = atom(
 
     try {
       set(LoadingCreateGameAtom, true);
-      const rsplsContract = ContractGenerator(address, rps.abi);
+      const signer = get(SignerAtom);
+      const rsplsContract = ContractGenerator(address, rps.abi, signer);
       const timeoutGame = await rsplsContract.j1Timeout();
       console.log("Mining...", timeoutGame.hash);
       await timeoutGame.wait();

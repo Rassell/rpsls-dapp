@@ -2,16 +2,14 @@ import { ethers } from "ethers";
 import { atom } from "jotai";
 
 import { hasher } from "../assets";
-const hasherContractAddress = "0x65CE10026F0930be42557FB20D074CE56cfA69cE";
+const hasherContractAddress = "0x0795997D6647098f0a69fE719908b3582dAd0bc5";
 
 export const LoadingInitWeb3Atom = atom(false);
 export const MissingMetaMaskAtom = atom(false);
 export const AccountAtom = atom<string | null>(null);
+export const SignerAtom = atom<ethers.providers.JsonRpcSigner | null>(null);
 export const rsplsContractAtom = atom<ethers.Contract | null>(null);
 export const hasherContractAtom = atom<ethers.Contract | null>(null);
-
-const contractGenerator = (address: string, abi: any) =>
-  new ethers.Contract(address, abi);
 
 export const initWeb3Atom = atom(null, async (get, set) => {
   if (get(AccountAtom) !== null) return;
@@ -36,8 +34,15 @@ export const initWeb3Atom = atom(null, async (get, set) => {
       console.log("No authorized account found");
     }
 
-    const hasherContract = contractGenerator(hasherContractAddress, hasher.abi);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const hasherContract = new ethers.Contract(
+      hasherContractAddress,
+      hasher.abi,
+      signer
+    );
 
+    set(SignerAtom, signer);
     set(hasherContractAtom, hasherContract);
     set(LoadingInitWeb3Atom, false);
   } catch (error) {

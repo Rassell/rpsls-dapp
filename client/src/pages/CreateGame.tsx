@@ -10,7 +10,11 @@ import {
 import { useAtom } from "jotai";
 
 import SelectMove from "../components/SelectMove";
-import { createGameAtom } from "../state/rps";
+import {
+  createGameAtom,
+  LoadingCreateGameAtom,
+  ResultGameAtom,
+} from "../state/rps";
 
 export default function CreateGame() {
   const [address, setAddress] = React.useState("");
@@ -18,6 +22,8 @@ export default function CreateGame() {
   const [amount, setAmount] = React.useState(0);
 
   const [, createGame] = useAtom(createGameAtom);
+  const [loadingCreateGame] = useAtom(LoadingCreateGameAtom);
+  const [resultGame] = useAtom(ResultGameAtom);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,9 +58,16 @@ export default function CreateGame() {
             <NumberInputField />
           </NumberInput>
         </FormControl>
-        <Button type="submit" variant="outline" width="full" mt={4}>
+        <Button
+          type="submit"
+          variant="outline"
+          width="full"
+          mt={4}
+          isLoading={loadingCreateGame}
+        >
           Create game
         </Button>
+        <div>Deploy Address: {resultGame}</div>
       </form>
     </div>
   );

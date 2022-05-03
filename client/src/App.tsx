@@ -30,10 +30,6 @@ export default function App() {
   }, [initWeb3]);
 
   const renderContent = (childrenToRender: JSX.Element) => {
-    if (missingMetaMask) {
-      return <div>Please install metamask</div>;
-    }
-
     if (loading) {
       return <Spinner />;
     }
@@ -63,17 +59,26 @@ export default function App() {
       <HashRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="creategame" element={renderContent(<CreateGame />)} />
-            <Route path="joingame" element={renderContent(<JoinGame />)} />
-            <Route
-              path="*"
-              element={
-                <main style={{ padding: "1rem" }}>
-                  <p>There's nothing here!</p>
-                </main>
-              }
-            />
+            {missingMetaMask ? (
+              <Route index element={<div>Please install metamask</div>} />
+            ) : (
+              <>
+                <Route index element={<Home />} />
+                <Route
+                  path="creategame"
+                  element={renderContent(<CreateGame />)}
+                />
+                <Route path="joingame" element={renderContent(<JoinGame />)} />
+                <Route
+                  path="*"
+                  element={
+                    <main style={{ padding: "1rem" }}>
+                      <p>There's nothing here!</p>
+                    </main>
+                  }
+                />
+              </>
+            )}
           </Route>
         </Routes>
       </HashRouter>
