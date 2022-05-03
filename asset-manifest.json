@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/rpsls-dapp/static/css/main.585ecc08.css",
+    "main.js": "/rpsls-dapp/static/js/main.2fc5fa3f.js",
+    "index.html": "/rpsls-dapp/index.html",
+    "main.585ecc08.css.map": "/rpsls-dapp/static/css/main.585ecc08.css.map",
+    "main.2fc5fa3f.js.map": "/rpsls-dapp/static/js/main.2fc5fa3f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.585ecc08.css",
+    "static/js/main.2fc5fa3f.js"
+  ]
+}
