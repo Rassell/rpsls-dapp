@@ -1,33 +1,28 @@
-import React from "react";
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  NumberInput,
-  NumberInputField,
-} from "@chakra-ui/react";
+import React, { useRef } from "react";
+import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
 import SelectMove from "../components/SelectMove";
-import { joinGameAtom, LoadingJoinGameAtom } from "../state/rps";
+import { LoadingJoinGameAtom, solveGameAtom } from "../state/rps";
 
 export default function JoinGame() {
   const [address, setAddress] = React.useState("");
   const [move, setMove] = React.useState("");
-  const [amount, setAmount] = React.useState(0);
+  const [salt, setSalt] = React.useState("");
+  const formRef = useRef();
 
-  const [, joinGame] = useAtom(joinGameAtom);
+  const [, solveGame] = useAtom(solveGameAtom);
   const [loading] = useAtom(LoadingJoinGameAtom);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    await joinGame({ address, move, amount });
+    await solveGame({ address, move, salt });
 
     setAddress("");
     setMove("");
-    setAmount(0);
+    setSalt("");
+    (event.target as any).reset();
   }
 
   return (
@@ -43,15 +38,12 @@ export default function JoinGame() {
         </FormControl>
         <SelectMove onChange={setMove} />
         <FormControl isRequired>
-          <FormLabel htmlFor="amount">Stake</FormLabel>
-          <NumberInput
-            id="amount"
-            min={0}
-            placeholder="Amount to bet"
-            onChange={(val) => setAmount(val as any)}
-          >
-            <NumberInputField />
-          </NumberInput>
+          <FormLabel htmlFor="amount">Salt</FormLabel>
+          <Input
+            id="salt"
+            placeholder="salt"
+            onChange={(e) => setSalt(e.target.value)}
+          />
         </FormControl>
         <Button
           type="submit"
@@ -60,7 +52,25 @@ export default function JoinGame() {
           mt={4}
           isLoading={loading}
         >
-          Join Game
+          Solve
+        </Button>
+        <Button
+          type="submit"
+          variant="outline"
+          width="full"
+          mt={4}
+          isLoading={loading}
+        >
+          j1Timeout
+        </Button>
+        <Button
+          type="submit"
+          variant="outline"
+          width="full"
+          mt={4}
+          isLoading={loading}
+        >
+          j2Timeout
         </Button>
       </form>
     </div>

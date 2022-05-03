@@ -80,7 +80,7 @@ export const joinGameAtom = atom(
   }
 );
 
-export const solveGameAtom = atom(null, async (get, set, { address }) => {
+export const solveGameAtom = atom(null, async (get, set, { address, move, salt }) => {
   const hasherContract = get(hasherContractAtom);
   const initGame = get(InitGameAtom);
   if (

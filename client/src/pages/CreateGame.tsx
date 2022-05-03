@@ -33,6 +33,7 @@ export default function CreateGame() {
     setAddress("");
     setMove("");
     setAmount(0);
+    (event.target as any).reset();
   }
 
   return (

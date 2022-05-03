@@ -5,7 +5,7 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/Layout";
 
-import { Home, CreateGame, JoinGame } from "./pages";
+import { Home, CreateGame, JoinGame, SolveGame } from "./pages";
 import {
   LoadingInitWeb3Atom,
   initWeb3Atom,
@@ -65,10 +65,14 @@ export default function App() {
               <>
                 <Route index element={<Home />} />
                 <Route
-                  path="creategame"
+                  path="createGame"
                   element={renderContent(<CreateGame />)}
                 />
-                <Route path="joingame" element={renderContent(<JoinGame />)} />
+                <Route path="joinGame" element={renderContent(<JoinGame />)} />
+                <Route
+                  path="solveGame"
+                  element={renderContent(<SolveGame />)}
+                />
                 <Route
                   path="*"
                   element={
