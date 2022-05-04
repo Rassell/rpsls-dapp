@@ -38,6 +38,7 @@ export const joinGameAtom = atom(
       const rsplsContract = ContractGenerator(address, rps.abi, signer);
       const playGame = await rsplsContract.play(move, {
         value: BigNumber.from(amount),
+        gasLimit: 30000,
       });
       console.log("Joining game...", playGame.hash);
       await playGame.wait();
