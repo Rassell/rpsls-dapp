@@ -42,7 +42,7 @@ export default function CreateGame() {
         </FormControl>
         <SelectMove onChange={setMove} />
         <FormControl isRequired>
-          <FormLabel htmlFor="amount">Stake</FormLabel>
+          <FormLabel htmlFor="amount">Stake in wei</FormLabel>
           <NumberInput
             id="amount"
             defaultValue={0}
